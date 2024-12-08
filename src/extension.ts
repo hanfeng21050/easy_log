@@ -9,16 +9,36 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        // 检查文件类型是否为 JavaScript/TypeScript
-        const supportedLanguages = ['javascript', 'typescript', 'javascriptreact', 'typescriptreact'];
-        if (!supportedLanguages.includes(editor.document.languageId)) {
-            vscode.window.showInformationMessage('Easy Log only works with JavaScript/TypeScript files.');
+        // 获取配置的前缀和支持的语言
+        const config = vscode.workspace.getConfiguration('easyLog');
+        const prefix = config.get<string>('prefix', '===>');
+        const supportedLanguages = config.get<string[]>('supportedLanguages', [
+            'javascript',
+            'typescript',
+            'javascriptreact',
+            'typescriptreact',
+            'vue',
+            'html',
+            'svelte',
+            'php',
+            'ejs',
+            'handlebars',
+            'nunjucks'
+        ]);
+
+        // 检查文件类型是否支持
+        const currentLanguage = editor.document.languageId;
+        if (!supportedLanguages.includes(currentLanguage)) {
+            vscode.window.showInformationMessage(`Easy Log does not support ${currentLanguage} files. Supported types: ${supportedLanguages.join(', ')}`);
             return;
         }
 
-        // 获取配置的前缀
-        const config = vscode.workspace.getConfiguration('easyLog');
-        const prefix = config.get<string>('prefix', '===>');
+        // 检查是否在 <script> 标签内（对于 HTML、Vue 等文件）
+        const isInScriptTag = checkIfInScriptTag(editor);
+        if (['html', 'vue', 'php', 'ejs', 'handlebars', 'nunjucks'].includes(currentLanguage) && !isInScriptTag) {
+            vscode.window.showInformationMessage('Please place the cursor inside a <script> tag to insert console.log');
+            return;
+        }
 
         const selection = editor.selection;
         const selectedText = editor.document.getText(selection);
@@ -170,3 +190,32 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
+// 添加新函数来检查是否在 script 标签内
+function checkIfInScriptTag(editor: vscode.TextEditor): boolean {
+    const document = editor.document;
+    const cursorLine = editor.selection.active.line;
+    
+    // 从光标位置向上搜索最近的 script 开始标签
+    let scriptStart = -1;
+    for (let i = cursorLine; i >= 0; i--) {
+        const lineText = document.lineAt(i).text;
+        if (/<script.*>/.test(lineText)) {
+            scriptStart = i;
+            break;
+        }
+    }
+    
+    // 如果找到了开始标签，向下搜索结束标签
+    if (scriptStart !== -1) {
+        for (let i = cursorLine; i < document.lineCount; i++) {
+            const lineText = document.lineAt(i).text;
+            if (/<\/script>/.test(lineText)) {
+                // 光标在 script 标签内
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}

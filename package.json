@@ -48,6 +48,23 @@
           "type": "string",
           "default": "===>",
           "description": "Prefix to use in console.log statements"
+        },
+        "easyLog.supportedLanguages": {
+          "type": "array",
+          "default": [
+            "javascript",
+            "typescript",
+            "javascriptreact",
+            "typescriptreact",
+            "vue",
+            "html",
+            "svelte",
+            "php",
+            "ejs",
+            "handlebars",
+            "nunjucks"
+          ],
+          "description": "List of supported file types"
         }
       }
     }

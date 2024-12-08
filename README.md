@@ -53,6 +53,18 @@ The extension supports three scenarios when inserting logs:
 - TypeScript (.ts)
 - JavaScript React (.jsx)
 - TypeScript React (.tsx)
+- Vue (.vue)
+- HTML (.html, .htm)
+- Angular (.component.ts)
+- Svelte (.svelte)
+- EJS (.ejs)
+- Handlebars (.hbs)
+- Nunjucks (.njk)
+- PHP (.php)
+- Webpack 配置 (.config.js)
+- Vite 配置 (vite.config.js)
+- Jest 测试 (.test.js, .spec.js)
+- Node.js 脚本
 
 ## Configuration
 
@@ -129,17 +141,121 @@ console.log('===> file.js:1 ~ ', );
 - **保持缩进**：自动保持代码的缩进级别
 - **可配置前缀**：可以自定义日志的前缀标识
 
-## Contributing
+## 配置选项
 
-Issues and feature requests are welcome! Feel free to contribute.
+你可以通过 VS Code 设置来自定义扩展：
 
-## Marketplace
+```json
+{
+  "easyLog.prefix": "===>" // 日志前缀的默认值
+}
+```
 
-This extension is available on:
+## 快捷键
 
-- [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=hanfeng21050.easy-log-helper)
-- [Open VSX Registry](https://open-vsx.org/extension/hanfeng21050/easy-log-helper)
+- `Alt+L`：插入 console.log 语句
+- `Shift+Alt+L`：删除所有由此扩展插入的 console.log 语句
 
-## License
+## 支持的文件类型
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+支持所有可以写 JavaScript/TypeScript 代码的文件：
+
+### Web 开发
+- JavaScript (.js, .mjs, .cjs)
+- TypeScript (.ts, .d.ts)
+- React (.jsx, .tsx)
+- Vue (.vue)
+- HTML (.html, .htm)
+- Angular (.component.ts)
+- Svelte (.svelte)
+
+### 模板引擎
+- EJS (.ejs)
+- Handlebars (.hbs)
+- Nunjucks (.njk)
+- PHP (.php)
+
+### 其他
+- Webpack 配置 (.config.js)
+- Vite 配置 (vite.config.js)
+- Jest 测试 (.test.js, .spec.js)
+- Node.js 脚本
+
+只要文件中包含可以执行 JavaScript/TypeScript 代码的部分，就可以使用此扩展插入和清除日志。
+
+### Vue 文件示例
+
+```vue
+<template>
+  <div @click="handleClick">{{ message }}</div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      message: 'Hello'  // 选中 message
+      // 按 Alt+L 插入：
+      // console.log('===> App.vue:8 ~ message', message)
+    }
+  },
+  methods: {
+    handleClick() {
+      const value = 42;
+      // 在这里按 Alt+L
+      console.log('===> App.vue:15 ~ value', value);
+    }
+  }
+}
+</script>
+```
+
+### HTML 文件示例
+
+```html
+<script>
+  function init() {
+    const config = {
+      theme: 'dark'  // 选中 theme
+      // 按 Alt+L 插入：
+      // console.log('===> index.html:5 ~ theme', theme)
+    };
+  }
+</script>
+```
+
+### React 组件示例
+
+```jsx
+function App() {
+  const [count, setCount] = useState(0);  // 选中 count
+  // 按 Alt+L 插入：
+  // console.log('===> App.jsx:3 ~ count', count);
+
+  return (
+    <button onClick={() => {
+      const newCount = count + 1;
+      // 在这里按 Alt+L
+      console.log('===> App.jsx:8 ~ newCount', newCount);
+      setCount(newCount);
+    }}>
+      点击 {count} 次
+    </button>
+  );
+}
+```
+
+## 安装方法
+
+1. 打开 VS Code
+2. 按 `Ctrl+P` 打开快速打开对话框
+3. 输入 `ext install easy-log`
+4. 按回车安装
+
+## 开源协议
+
+MIT
+
+## 参与贡献
+
+欢迎提交问题和功能建议！
